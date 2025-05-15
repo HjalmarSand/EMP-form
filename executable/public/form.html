@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Användarformulär</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="authMessageContainer" class="container" style="display: block;"> <!-- Show this by default -->
+      <div id="authMessage">Verifierar behörighet...</div>
+  </div>
+
+  <div id="formContainer" class="container" style="display: none;"> <!-- Hide this by default -->
+    <h1>Användarformulär</h1>
+    <p>Skickar in som: <strong id="userEmailDisplay"></strong></p>
+    <form id="userForm">
+      <label for="name">Namn:</label>
+      <input type="text" id="name" name="name" required />
+      <label for="age">Ålder:</label>
+      <input type="number" id="age" name="age" required />
+      <input type="hidden" id="emailForSubmission" name="email" />
+      <button type="submit">Skicka formulär</button>
+    </form>
+    <p id="submitMessage" class="error"></p> <!-- Can be 'success' too -->
+  </div>
+
+  <script>
+    let validatedEmail = null;
+
+    function getQueryParam(param) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(param);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const emailFromUrl = getQueryParam('email');
+      const authMessageElement = document.getElementById('authMessage');
+      const authMessageContainerElement = document.getElementById('authMessageContainer');
+      const formContainerElement = document.getElementById('formContainer');
+
+      if (!emailFromUrl) {
+        authMessageElement.textContent = 'Ingen e-postadress angiven. Omdirigerar till autentisering...';
+        authMessageElement.style.color = 'red';
+        setTimeout(() => { window.location.href = 'index.html'; }, 3000);
+        return;
+      }
+
+      fetch('auth.json') // Fetches auth.json from the public directory
+        .then(response => {
+          if (!response.ok) throw new Error(`HTTP error! status: ${response.status} while fetching auth.json`);
+          return response.json(); // Expects an array
+        })
+        .then(authData => {
+          if (!Array.isArray(authData)) {
+            throw new Error('Auth data is not in the expected array format.');
+          }
+          const lowerCaseEmail = decodeURIComponent(emailFromUrl).toLowerCase();
+
+          // Check if email exists in the authData array
+          if (authData.includes(lowerCaseEmail)) {
+            validatedEmail = lowerCaseEmail;
+            authMessageContainerElement.style.display = 'none'; // Hide verification message container
+            document.getElementById('userEmailDisplay').textContent = validatedEmail;
+            document.getElementById('emailForSubmission').value = validatedEmail;
+            formContainerElement.style.display = 'block'; // Show the form
+          } else {
+            // Email not found (either never authorized or already used and removed)
+            authMessageElement.textContent = 'Ogiltig e-postadress eller så har den redan använts. Omdirigerar till autentisering...';
+            authMessageElement.style.color = 'red';
+            setTimeout(() => { window.location.href = 'index.html'; }, 3000);
+          }
+        })
+        .catch(error => {
+          console.error('Fel vid verifiering av e-post på formulärsidan:', error);
+          authMessageElement.textContent = 'Kunde inte verifiera e-postadressen. Försök igen via autentiseringssidan.';
+          authMessageElement.style.color = 'red';
+          setTimeout(() => { window.location.href = 'index.html'; }, 4000);
+        });
+    });
+
+    document.getElementById('userForm').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      if (!validatedEmail) {
+          document.getElementById('submitMessage').textContent = 'Kan inte skicka formuläret utan en giltig e-postadress.';
+          return;
+      }
+
+      const name = document.getElementById('name').value.trim();
+      const age = document.getElementById('age').value;
+      const submitMessage = document.getElementById('submitMessage');
+      submitMessage.textContent = '';
+      submitMessage.className = ''; // Clear existing classes
+
+      const data = {
+          name: name,
+          age: age,
+          email: validatedEmail
+      };
+
+      try {
+        const response = await fetch('/submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data),
+        });
+
+        const responseData = await response.json(); // Try to parse JSON response from server
+
+        if (response.ok) {
+          submitMessage.textContent = responseData.message || 'Formuläret skickades!';
+          submitMessage.className = 'success'; // Use success class
+          document.getElementById('userForm').reset();
+          document.querySelector('#userForm button[type="submit"]').disabled = true;
+          alert('Formuläret har skickats! Du kommer nu att omdirigeras.');
+          setTimeout(() => { window.location.href = 'thankyou.html'; }, 2000);
+        } else {
+          submitMessage.textContent = `Fel: ${responseData.message || response.statusText || 'Okänt serverfel'}`;
+          submitMessage.className = 'error'; // Use error class
+          console.error('Servern svarade med fel:', response.status, responseData);
+        }
+      } catch (error) {
+        console.error('Nätverksfel eller problem vid inskickning:', error);
+        submitMessage.textContent = 'Ett nätverksfel uppstod. Försök igen.';
+        submitMessage.className = 'error';
+      }
+    });
+  </script>
+</body>
+</html>

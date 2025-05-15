@@ -1,0 +1,35 @@
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-error.log*
+yarn-debug.log*
+package-lock.json # If you use npm and commit package.json, you might want to commit this too.
+                  # If you use yarn, commit yarn.lock instead.
+                  # For consistency, it's generally good to commit one of them.
+                  # I'll assume you might want to commit package-lock.json. If not, add it.
+# yarn.lock # Uncomment if you use Yarn and want to ignore its lock file (usually you commit it)
+
+# Database file (often local and can get large or contain test data)
+submissions.db
+submissions.db-journal # SQLite temporary file
+
+# Packaged executables (these are build artifacts, not source code)
+*.exe
+my-form-app
+export-submissions
+dist/ # If you output executables to a 'dist' folder
+
+# Auth file (can contain sensitive info or change frequently per user)
+# If you want a TEMPLATE auth.json in git, you can name it auth.json.example
+# and add the actual auth.json (in the public folder) to .gitignore
+public/auth.json # This prevents specific user email lists from being committed.
+                 # Consider adding an auth.json.example with the structure.
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# IDE / Editor specific files
+.vscode/
+.idea/
+*.swp

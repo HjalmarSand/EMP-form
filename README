@@ -1,0 +1,41 @@
+How to run the Form Application:
+
+1.  Make sure you have extracted all files from the ZIP into a single folder on your computer.
+    It should look like this:
+    - my-form-app.exe
+    - a 'public' folder
+    - (maybe a 'submissions.db' file)
+
+2.  Double-click on 'my-form-app.exe'.
+    A black window (console) might appear. This is normal; it means the server is running.
+    Do NOT close this black window while you are using the application.
+
+3.  Open your web browser (like Chrome, Edge, or Firefox).
+
+4.  In the address bar, type: http://localhost:3000 and press Enter.
+
+5.  The form application should now appear.
+
+To Stop the Application:
+- Close the black console window that opened when you started 'my-form-app.exe'.
+- Or, close the web browser tab and then close the black console window.
+
+The data you submit will be saved in a file called 'submissions.db' inside this folder.
+The list of allowed emails is in 'public/auth.json'.
+
+How to Export Data to Excel:
+
+1.  Make sure you have used the 'my-form-app.exe' and some data has been submitted.
+    The submitted data is stored in 'submissions.db'.
+
+2.  Double-click on 'export-submissions.exe'.
+
+3.  A black window (console) will appear and show progress.
+    When it's finished, it will say "Data successfully exported to submissions_export.xlsx"
+    and "You can close this window now." or prompt you to press Enter.
+
+4.  A new file named 'submissions_export.xlsx' will be created in this same folder.
+    You can open this file with Microsoft Excel or any compatible program.
+
+The data you submit via the web form is saved in 'submissions.db'.
+The Excel export reads from 'submissions.db'.

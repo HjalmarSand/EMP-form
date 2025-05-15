@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>E-postverifiering</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- Inline styles removed for brevity, assuming they are in style.css -->
+</head>
+<body>
+  <div class="container">
+    <h1>Verifiera din e-postadress</h1>
+    <p>Ange din e-postadress för att komma åt formuläret.</p>
+    
+    <div id="loadingMessage" style="display: none;">Laddar autentiseringsdata...</div>
+    
+    <div>
+      <label for="emailInput" style="display:block; margin-bottom:5px; text-align:left;">E-post:</label>
+      <input type="email" id="emailInput" name="email" placeholder="din.email@example.com" required>
+      <button id="submitEmail">Verifiera</button>
+    </div>
+    <p id="errorMessage" class="error"></p>
+  </div>
+
+  <script>
+    let authData = []; // Expecting an array now
+    const emailInputElement = document.getElementById('emailInput');
+    const submitEmailButtonElement = document.getElementById('submitEmail');
+    const errorMessageElement = document.getElementById('errorMessage');
+    const loadingMessageElement = document.getElementById('loadingMessage');
+
+    document.addEventListener('DOMContentLoaded', () => {
+      loadingMessageElement.style.display = 'block';
+      submitEmailButtonElement.disabled = true;
+      emailInputElement.disabled = true;
+
+      fetch('auth.json')
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status} while fetching auth.json`);
+          }
+          return response.json(); // Expects an array
+        })
+        .then(data => {
+          if (!Array.isArray(data)) {
+            throw new Error('Auth data is not in the expected array format.');
+          }
+          authData = data;
+          console.log('Auth data (array) laddad:', authData);
+          errorMessageElement.textContent = '';
+          submitEmailButtonElement.disabled = false;
+          emailInputElement.disabled = false;
+          emailInputElement.focus();
+        })
+        .catch(error => {
+          console.error('Fel vid laddning av auth data:', error);
+          errorMessageElement.textContent = 'Kunde inte ladda autentiseringsdata. Kontrollera formatet eller försök ladda om sidan.';
+        })
+        .finally(() => {
+          loadingMessageElement.style.display = 'none';
+        });
+    });
+
+    submitEmailButtonElement.addEventListener('click', () => {
+      const email = emailInputElement.value.trim().toLowerCase();
+      errorMessageElement.textContent = '';
+
+      if (!email) {
+        errorMessageElement.textContent = 'Vänligen ange en e-postadress.';
+        return;
+      }
+
+      // Check if email exists in the authData array
+      if (authData.includes(email)) {
+        // Email is valid and authorized
+        window.location.href = `form.html?email=${encodeURIComponent(email)}`;
+      } else {
+        // Email not found (either never authorized or already used and removed)
+        errorMessageElement.textContent = 'E-postadressen är inte behörig eller har redan använts.';
+      }
+    });
+
+    emailInputElement.addEventListener('keypress', function(event) {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            if (!submitEmailButtonElement.disabled) {
+                submitEmailButtonElement.click();
+            }
+        }
+    });
+  </script>
+</body>
+</html>

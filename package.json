@@ -1,0 +1,37 @@
+{
+  "name": "my-form-app",
+  "version": "1.0.0",
+  "description": "A simple form submission application.",
+  "main": "server.js",
+  "bin": "server.js", 
+  "scripts": {
+    "start": "node server.js",
+    "package-server-win": "pkg --config package.json server.js --targets node18-win-x64 --output my-form-app.exe",
+    "package-server-macos": "pkg --config package.json server.js --targets node18-macos-x64 --output my-form-app",
+    "package-server-linux": "pkg --config package.json server.js --targets node18-linux-x64 --output my-form-app",
+    "export-excel": "node export-to-excel.js",
+    "package-exporter-win": "pkg --config package.json export-to-excel.js --targets node18-win-x64 --output export-submissions.exe",
+    "package-exporter-macos": "pkg --config package.json export-to-excel.js --targets node18-macos-x64 --output export-submissions",
+    "package-exporter-linux": "pkg --config package.json export-to-excel.js --targets node18-linux-x64 --output export-submissions"
+  },
+  "dependencies": {
+    "express": "^4.17.1", 
+    "knex": "^3.0.0",
+    "sqlite3": "^5.1.0",
+    "exceljs": "^4.3.0"
+  },
+  "devDependencies": {
+    "pkg": "^5.8.0"
+  },
+  "pkg": {
+    "assets": [
+      "node_modules/sqlite3/build/Release/node_sqlite3.node"
+    ],
+    "scripts": [
+        "node_modules/knex/lib/dialects/sqlite3/index.js", 
+        "node_modules/knex/lib/dialects/mysql/index.js", 
+        "node_modules/knex/lib/dialects/postgres/index.js"
+    ]
+
+  }
+}

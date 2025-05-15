@@ -1,0 +1,44 @@
+Så här kör du formulärprogrammet:
+
+1.  Se till att du har packat upp alla filer från ZIP-filen till en och samma mapp på din dator.
+    Det bör se ut ungefär så här i mappen:
+    - my-form-app.exe
+    - en mapp som heter 'public'
+    - (eventuellt en fil som heter 'submissions.db')
+
+2.  Dubbelklicka på filen 'my-form-app.exe'.
+    Ett svart fönster (en konsol) kan dyka upp. Detta är normalt; det betyder att servern (programmet) körs.
+    Stäng INTE detta svarta fönster medan du använder formuläret.
+
+3.  Öppna din webbläsare (t.ex. Chrome, Edge eller Firefox).
+
+4.  I adressfältet, skriv in: http://localhost:3000 och tryck sedan på Enter-tangenten.
+
+5.  Formulärsidan bör nu visas i webbläsaren.
+
+6. För att se vilka email-adresser som är giltiga, gå in mappen 'public' och öppna upp filen som heter auth.json
+
+Så här stoppar du programmet:
+- Stäng det svarta konsolfönstret som öppnades när du startade 'my-form-app.exe'.
+- Eller, stäng webbläsarfliken med formuläret och stäng sedan det svarta konsolfönstret.
+
+De uppgifter du skickar in via formuläret sparas i en fil som heter 'submissions.db' i den här mappen.
+Listan över e-postadresser som får använda formuläret finns i filen 'auth.json' som ligger i mappen 'public'.
+
+---
+
+Så här exporterar du data till Excel:
+
+1.  Se till att du har använt formulärprogrammet ('my-form-app.exe') och att några uppgifter har skickats in.
+    De inskickade uppgifterna lagras i filen 'submissions.db'.
+
+2.  Dubbelklicka på filen 'export-submissions.exe'.
+
+3.  Ett svart fönster (en konsol) kommer att visas och visa hur exporten fortskrider.
+    När det är klart kommer fönstret att visa ett meddelande, till exempel "Data successfully exported to submissions_export.xlsx" och "You can close this window now." (eller liknande på engelska). Därefter kan du stänga fönstret, eller så uppmanas du att trycka på Enter-tangenten.
+
+4.  En ny fil med namnet 'submissions_export.xlsx' kommer att skapas i samma mapp.
+    Du kan öppna denna fil med Microsoft Excel eller ett annat program som kan läsa Excel-filer.
+
+De uppgifter du skickar in via webbformuläret sparas i 'submissions.db'.
+Excel-exporten hämtar data från 'submissions.db'.
